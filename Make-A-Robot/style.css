@@ -1,0 +1,45 @@
+#container {
+  width: 100%;
+  height: 100vh;
+}
+img {
+  flex: auto;
+  width: 50px;
+}
+#face {
+  align-content: center;
+  width: 450px;
+  height: 70vh;
+}
+
+#eyes2{
+  position: absolute;
+  top: 225px;
+  left: 150px;
+  height: 10%;
+  width: 150px;
+}
+
+#mouth2{
+  position: absolute;
+  top: 350px;
+  left: 150px;
+  height: 10%;
+  width: 150px;
+}
+
+#nose1{
+  position: absolute;
+  top: 280px;
+  left: 150px;
+  height: 10%;
+  width: 150px;
+}
+
+#antenna{
+  position: absolute;
+  top: 28px;
+  left: 75px;
+  height: 25%;
+  width: 550px;
+}

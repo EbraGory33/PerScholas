@@ -1,0 +1,121 @@
+body {
+}
+
+.main {
+  display: flex;
+  justify-content: center;
+}
+
+.resumePage {
+  background: #222;
+  padding: 20px;
+  width: 1000px;
+}
+
+.profile-pic {
+  width: 120px;
+  height: 120px;
+}
+
+.name {
+  color: white;
+  font-size: 28px;
+  margin-bottom: 0;
+}
+
+.title {
+  color: #00aaff;
+}
+
+.intro {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #aaa;
+}
+
+.profile-header-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.info-table {
+  width: 100%;
+  color: #aaa;
+}
+
+#profile-header {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  align-items: center;
+}
+
+.divider {
+  border-color: #444;
+}
+
+.section-title {
+  background: #333;
+  color: #00c8ff;
+  padding: 5px 10px;
+  margin: 15px 0;
+}
+
+.job, .edu {
+  margin-bottom: 15px;
+  color: white
+}
+
+.year {
+  float: right;
+  font-size: 14px;
+  color: #888;
+}
+
+.role {
+  font-style: italic;
+  color: #bbb;
+}
+
+.desc {
+  font-size: 13px;
+  color: #aaa;
+}
+
+.skill {
+  margin: 8px 0;
+  color: #aaa;
+}
+
+.bar {
+  background: #444;
+  height: 10px;
+  width: 100%;
+  border-radius: 4px;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 4px;
+}
+
+.wp { width: 90%; background: #00c8ff; }
+.php { width: 80%; background: #0099ff; }
+.html { width: 93%; background: #00ff88; }
+.css { width: 80%; background: #ffcc00; }
+.mysql { width: 70%; background: #ff4444; }
+
+ul {
+  list-style: none;
+  padding-left: 15px;
+  color: #aaa;
+}
+ul li::before {
+  content: "• ";
+  color: #00c8ff;
+}
+
+p{
+    color: #aaa;
+}
