@@ -54,5 +54,59 @@ console.log(table);
 
 // Part 3: Transforming Data
 
+// let table = [
+//   ["ID", "Name", "Occupation", "Age"],
+//   ["42", "Bruce", "Knight", "41"],
+//   ["57", "Bob", "Fry Cook", "19"],
+//   ["63", "Blaine", "Quiz Master", "58"],
+//   ["98", "Bill", "Doctor’s Assistant", "26"],
+// ];
+let result = [];
+let headers = table[0].map((h) => h.toLowerCase());
+
+for (let i = 1; i < table.length; i++) {
+  let row = table[i];
+  let obj = {};
+  for (let j = 0; j < row.length; j++) {
+    obj[headers[j]] = row[j];
+  }
+  result.push(obj);
+}
+
+console.log(result);
+
 // Part 4: Sorting and Manipulating Data
+
+result.pop();
+
+result.splice(1, 0, {
+  id: "48",
+  name: "Barry",
+  occupation: "Runner",
+  age: "25",
+});
+
+result.push({ id: "7", name: "Bilbo", occupation: "None", age: "111" });
+
+let totalAge = 0;
+
+for (let person of result) {
+  totalAge += parseInt(person.age);
+}
+let avgAge = totalAge / result.length;
+
+console.log("Updated result:", result);
+console.log("Average age:", avgAge);
+
 // Part 5: Full Circle
+
+headers = Object.keys(result[0]);
+let csvRows = [headers.join(",")];
+
+for (let obj of result) {
+  let values = headers.map((h) => obj[h]);
+  csvRows.push(values.join(","));
+}
+csv = csvRows.join("\n");
+
+console.log(csv);
