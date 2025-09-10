@@ -15,19 +15,19 @@ const AssignmentGroup = {
     {
       id: 1,
       name: "Declare a Variable",
-      due_at: "2023-01-25",
+      dueDate: "2023-01-25",
       points_possible: 50,
     },
     {
       id: 2,
       name: "Write a Function",
-      due_at: "2023-02-27",
+      dueDate: "2023-02-27",
       points_possible: 150,
     },
     {
       id: 3,
       name: "Code the World",
-      due_at: "3156-11-15",
+      dueDate: "3156-11-15",
       points_possible: 500,
     },
   ],
@@ -96,7 +96,7 @@ const LearnerSubmissions = [
 //   {
 //     learner_id: 125,
 //     assignment_id: 3,
-//     submission: { submitted_at: "2023-02-15", score: 480 },
+//     submission: { submitted_at: "3156-11-15", score: 480 },
 //   },
 // ];
 
@@ -121,7 +121,7 @@ const LearnerSubmissions = [
 //   {
 //     learner_id: 125,
 //     assignment_id: 2,
-//     submission: { submitted_at: "2023-02-20", score: 0 },
+//     submission: { submitted_at: "2023-02-27", score: 0 },
 //   },
 // ];
 
@@ -130,17 +130,17 @@ const LearnerSubmissions = [
 //   {
 //     learner_id: 125,
 //     assignment_id: 1,
-//     submission: { submitted_at: "2023-01-20", score: 50 },
+//     submission: { submitted_at: "2023-01-25", score: 50 },
 //   },
 //   {
 //     learner_id: 125,
 //     assignment_id: 2,
-//     submission: { submitted_at: "2023-02-10", score: 150 },
+//     submission: { submitted_at: "2023-02-27", score: 150 },
 //   },
 //   {
 //     learner_id: 125,
 //     assignment_id: 3,
-//     submission: { submitted_at: "2023-02-15", score: 500 },
+//     submission: { submitted_at: "3156-11-15", score: 500 },
 //   },
 // ];
 
@@ -159,7 +159,7 @@ const LearnerSubmissions = [
 //   {
 //     learner_id: 127,
 //     assignment_id: 2,
-//     submission: { submitted_at: "2023-02-20", score: 75 },
+//     submission: { submitted_at: "2023-02-27", score: 75 },
 //   },
 // ];
 
@@ -189,33 +189,8 @@ const LearnerSubmissions = [
 // ];
 
 // ---------------------------- HELPER FUNCTIONS ----------------------------
-// function isEarly(submissionDate, dueDate) {
-//   return new Date(submissionDate) < new Date(dueDate);
-// }
-
-// function isAssignmetLate(submissionDate, dueDate) {
-//   return new Date(submissionDate) > new Date(dueDate);
-// }
-
-// function isOnTime(submissionDate, dueDate) {
-//   return new Date(submissionDate) === new Date(dueDate);
-// }
-
-// function calculateScore(Score, pointsPossible) {
-//   return Score / pointsPossible;
-// }
-
-// function updateAvg(Score, points_possible) {
-//   return Score / points_possible;
-// }
-
-// ---------------------------- HELPER FUNCTIONS ----------------------------
 
 // Date checks
-function isEarly(submissionDate, dueDate) {
-  return new Date(submissionDate) < new Date(dueDate);
-}
-
 function isLate(submissionDate, dueDate) {
   return new Date(submissionDate) > new Date(dueDate);
 }
@@ -225,19 +200,19 @@ function isOnTime(submissionDate, dueDate) {
 }
 
 // Score calculations
-function calculateScore(score, pointsPossible) {
-  return +(score / pointsPossible).toFixed(2);
+function calculateScore(score, points_possible) {
+  return +(score / points_possible).toFixed(2);
 }
 
-function applyLatePenalty(score, pointsPossible) {
-  let lateScore = score - pointsPossible * 0.1;
+function applyLatePenalty(score, points_possible) {
+  let lateScore = score - points_possible * 0.1;
   if (lateScore < 0) lateScore = 0;
-  return lateScore, 0;
+  return lateScore;
 }
 
-function updateTotals(totals, score, pointsPossible) {
+function updateTotals(totals, score, points_possible) {
   totals.total_score += score;
-  totals.total_points_possible += pointsPossible;
+  totals.total_points_possible += points_possible;
   return totals;
 }
 
@@ -249,172 +224,76 @@ function getLearnerData(course, ag, submissions) {
         "Assignment group does not belong to the specified course"
       );
 
-    const learnerIds = [...new Set(submissions.map((sub) => sub.learner_id))];
+    if (ag.assignments.length === 0) return [];
+    if (submissions.length === 0) return [];
+
+    const learnerIds = new Set(submissions.map((sub) => sub.learner_id));
+
     const result = [];
 
     for (let id of learnerIds) {
-      let avg = 0.0;
-      let total_Score = 0;
-      let total_Points_Possible = 0;
+      let totals = { total_score: 0, total_points_possible: 0 };
       let assignmentScore = {};
 
       for (let sub of submissions) {
+        if (sub.learner_id !== id) continue;
+
         const matchedAssignment = ag.assignments.find(
           (a) => a.id === sub.assignment_id
         );
+
         if (!matchedAssignment) continue;
-        if (sub.learner_id === id) {
-          let sub_score = sub.submission.score;
-          let sub_points_possible = matchedAssignment.points_possible;
-          let submitted_at = sub.submission.submitted_at;
-          let due_at = matchedAssignment.due_at;
-          if (isOnTime(submitted_at, due_at)) {
-            // On-time submission: full score
-            total_score += sub_score;
-            total_points_possible += sub_points_possible;
 
-            avg = updateAvg(total_score, total_points_possible);
+        const { submitted_at, score } = sub.submission;
+        const { dueDate, points_possible } = matchedAssignment;
 
-            assignmentScore[matchedAssignment.id] = +calculateScore(
-              sub_score,
-              sub_points_possible
-            ).toFixed(2);
-          } else if (isAssignmetLate(submitted_at, due_at)) {
-            // Late submission: deduct 10% of points possible
-            let late_Score = applyLatePenalty(score, pointsPossible);
-            // total_score += late_Score;
-            total_Score = updateTotals(totals, late_Score, pointsPossible);
-            total_points_possible += sub_points_possible;
-
-            avg = updateAvg(total_score, total_points_possible);
-
-            assignmentScore[matchedAssignment.id] = +calculateScore(
-              late_Score,
-              sub_points_possible
-            ).toFixed(2);
-          } else {
-            // Early submission: Results not included in average
-            continue;
-          }
+        // On-time submission: full score
+        if (isOnTime(submitted_at, dueDate)) {
+          totals = updateTotals(totals, score, points_possible);
+          assignmentScore[matchedAssignment.id] = calculateScore(
+            score,
+            points_possible
+          );
+        } // Late submission: deduct 10% of points possible
+        else if (isLate(submitted_at, dueDate)) {
+          let lateScore = applyLatePenalty(score, points_possible);
+          totals = updateTotals(totals, lateScore, points_possible);
+          assignmentScore[matchedAssignment.id] = calculateScore(
+            lateScore,
+            points_possible
+          );
+        } // Early submission: Results not included in average
+        else {
+          continue;
         }
       }
-      console.log("Total Score:", score, "Points Possible:", points_possible);
-      avg = +(score / points_possible).toFixed(2);
+
+      let avg =
+        totals.total_points_possible > 0
+          ? +(totals.total_score / totals.total_points_possible).toFixed(2)
+          : 0;
+
+      console.log(
+        "Total Score:",
+        totals.total_score,
+        "Points Possible:",
+        totals.total_points_possible
+      );
+
       let learnerResult = { id, avg };
       for (let [key, value] of Object.entries(assignmentScore)) {
         learnerResult[key] = value;
       }
+
       result.push(learnerResult);
     }
     return result;
   } catch (error) {
     console.error("Error processing learner data:", error.message);
-    return [];
   }
 }
 
+// ---------------------------- RUN THE FUNCTION ----------------------------
 const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
 
 console.log(result);
-
-// // The provided course information.
-// const CourseInfo = {
-//   id: 451,
-//   name: "Introduction to JavaScript"
-// };
-
-// // The provided assignment group.
-// const AssignmentGroup = {
-//   id: 12345,
-//   name: "Fundamentals of JavaScript",
-//   course_id: 451,
-//   group_weight: 25,
-//   assignments: [
-//     {
-//       id: 1,
-//       name: "Declare a Variable",
-//       due_at: "2023-01-25",
-//       points_possible: 50
-//     },
-//     {
-//       id: 2,
-//       name: "Write a Function",
-//       due_at: "2023-02-27",
-//       points_possible: 150
-//     },
-//     {
-//       id: 3,
-//       name: "Code the World",
-//       due_at: "3156-11-15",
-//       points_possible: 500
-//     }
-//   ]
-// };
-
-// // The provided learner submission data.
-// const LearnerSubmissions = [
-//   {
-//     learner_id: 125,
-//     assignment_id: 1,
-//     submission: {
-//       submitted_at: "2023-01-25",
-//       score: 47
-//     }
-//   },
-//   {
-//     learner_id: 125,
-//     assignment_id: 2,
-//     submission: {
-//       submitted_at: "2023-02-12",
-//       score: 150
-//     }
-//   },
-//   {
-//     learner_id: 125,
-//     assignment_id: 3,
-//     submission: {
-//       submitted_at: "2023-01-25",
-//       score: 400
-//     }
-//   },
-//   {
-//     learner_id: 132,
-//     assignment_id: 1,
-//     submission: {
-//       submitted_at: "2023-01-24",
-//       score: 39
-//     }
-//   },
-//   {
-//     learner_id: 132,
-//     assignment_id: 2,
-//     submission: {
-//       submitted_at: "2023-03-07",
-//       score: 140
-//     }
-//   }
-// ];
-
-// function getLearnerData(course, ag, submissions) {
-//   // here, we would process this data to achieve the desired result.
-//   const result = [
-//     {
-//       id: 125,
-//       avg: 0.985, // (47 + 150) / (50 + 150)
-//       1: 0.94, // 47 / 50
-//       2: 1.0 // 150 / 150
-//     },
-//     {
-//       id: 132,
-//       avg: 0.82, // (39 + 125) / (50 + 150)
-//       1: 0.78, // 39 / 50
-//       2: 0.833 // late: (140 - 15) / 150
-//     }
-//   ];
-
-//   return result;
-// }
-
-// const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
-
-// console.log(result);
