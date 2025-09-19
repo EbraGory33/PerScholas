@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <div class="main-section">
+      <!-- Header -->
+      <div class="header">
+        <div class="date">
+          <span id="month"></span>
+          <span id="day"></span>
+        </div>
+        <div class="header-content">
+          <h2>Good Afternoon.</h2>
+          <p>What's your plan for today?</p>
+        </div>
+      </div>
+
+      <!-- Todo Section (input + list together) -->
+      <div class="todo-section">
+        <div id="input" class="add-todo">
+          <input type="text" class="add-input" placeholder="Add Todo" />
+        </div>
+        <div class="todo-list">
+          <!-- <div class="todo-card">
+            <div><span>2023-02-04</span> Take out the bins</div>
+            <div class="tag">#life</div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+    <script src="./src/script.js"></script>
+  </body>
+</html>
