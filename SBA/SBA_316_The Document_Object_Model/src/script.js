@@ -20,7 +20,6 @@ const inputField = document.querySelector("#input .add-input");
 const inputContainer = document.getElementById("input");
 
 function createExtraFields() {
-  // Prevent duplicates
   if (document.getElementById("extra-fields")) return;
 
   const wrapper = document.createElement("div");
