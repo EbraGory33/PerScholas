@@ -16,22 +16,6 @@ const months = [
 document.getElementById("month").textContent = months[today.getMonth()];
 document.getElementById("day").textContent = today.getDate();
 
-// const inputField = document.querySelector("#input .add-input");
-// const extraFields = document.getElementById("extra-fields");
-// const inputContainer = document.getElementById("input");
-
-// // Show fields when clicking inside the input
-// inputField.addEventListener("focus", () => {
-//   extraFields.style.display = "block";
-// });
-
-// // Hide fields when clicking outside the container
-// document.addEventListener("click", (e) => {
-//   if (!inputContainer.contains(e.target)) {
-//     extraFields.style.display = "none";
-//   }
-// });
-
 const inputField = document.querySelector("#input .add-input");
 const inputContainer = document.getElementById("input");
 
@@ -45,9 +29,8 @@ function createExtraFields() {
   wrapper.innerHTML = `
     <div class="add-input" style="display: flex">
       <p>Date</p>
-      <input type="date" placeholder="Add Todo" />
+      <input name="date" type="date" placeholder="Add Todo" required />
     </div>
-
     <div class="add-input" style="display: flex">
       <p>Priority</p>
       <div style="display: flex; margin: 16px; gap: 16px">
@@ -68,8 +51,9 @@ function createExtraFields() {
 
     <div class="add-input" style="display: flex">
       <p>Tag</p>
-      <input type="text" class="add-input" placeholder="Add Tag" />
+      <input id="todo-tag" name="tag" type="text" class="add-input" placeholder="Add Tag" />
     </div>
+    <button type="submit">Add</button>
   `;
 
   inputContainer.appendChild(wrapper);
@@ -85,7 +69,76 @@ inputField.addEventListener("focus", createExtraFields);
 
 // Remove when clicking outside
 document.addEventListener("click", (e) => {
+  // e.preventDefault();
   if (!inputContainer.contains(e.target)) {
     removeExtraFields();
   }
 });
+
+function createTodoItem(title, date, priority, tag) {
+  const list = document.getElementById("todo-list");
+  // Create todo-card
+  const card = document.createElement("div");
+  card.className = "todo-card";
+
+  card.innerHTML = `
+    <input type="checkbox" class="todo-check" />
+    <div class="todo-content">
+      <div><span>${date}</span> ${title} (${priority})</div>
+      <div class="tag">#${tag}</div>
+    </div>
+  `;
+
+  const fragment = document.createDocumentFragment();
+  fragment.appendChild(card);
+  if (list.firstChild) {
+    list.insertBefore(card, list.firstChild);
+  } else {
+    list.appendChild(card);
+  }
+
+  inputField.value = "";
+  removeExtraFields();
+  window.alert("Task added!");
+}
+
+inputContainer.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const title = inputField.value.trim();
+  if (title.length < 3) {
+    alert("Todo must be at least 3 characters long.");
+    return;
+  }
+  const date = inputContainer.elements["date"].value;
+  const priority = inputContainer.elements["priority"].value;
+  const tag = inputContainer.elements["tag"]?.value.trim() || "general";
+
+  createTodoItem(title, date, priority, tag);
+});
+
+document.getElementById("todo-list").addEventListener("change", (e) => {
+  if (e.target.classList.contains("todo-check")) {
+    const card = e.target.parentNode;
+    card.classList.toggle("completed", e.target.checked);
+
+    if (e.target.checked) {
+      card.setAttribute("aria-checked", "true");
+    } else {
+      card.setAttribute("aria-checked", "false");
+    }
+  }
+});
+
+// Clear completed button functionality
+document.getElementById("clear-completed").addEventListener("click", () => {
+  const todos = document.querySelectorAll(".todo-card");
+  todos.forEach((todo) => {
+    const checkbox = todo.querySelector(".todo-check");
+    if (checkbox && checkbox.checked) {
+      todo.remove();
+    }
+  });
+  window.alert("Cleared all completed");
+});
+
+window.document.title = "Todos";
