@@ -63,12 +63,10 @@ function removeExtraFields() {
   if (wrapper) wrapper.remove();
 }
 
-// Show when focusing input
 inputField.addEventListener("focus", createExtraFields);
 
 // Remove when clicking outside
 document.addEventListener("click", (e) => {
-  // e.preventDefault();
   if (!inputContainer.contains(e.target)) {
     removeExtraFields();
   }
